@@ -1,0 +1,716 @@
+/* ==========================================================================
+   OFFICIAL ENTERPRISE BANK MANAGEMENT SYSTEM - PORTAL CORE LOGIC
+   ========================================================================== */
+
+// Initial Seed Database in LocalStorage if empty
+(function initDatabase() {
+    if (!localStorage.getItem('bank_users')) {
+        const initialUsers = [
+            {
+                name: 'John Doe',
+                email: 'demo@gmail.com',
+                phone: '+1 (555) 019-2834',
+                password: 'Password123!',
+                accountType: 'Premier Checking Account',
+                accountNumber: '#8849-2049-1102',
+                balance: '148,920.50'
+            }
+        ];
+        localStorage.setItem('bank_users', JSON.stringify(initialUsers));
+    }
+})();
+
+// Application & Navigation State
+let currentUser = null;
+let currentOtpCode = '';
+let pendingOtpAction = null; // 'LOGIN', 'REGISTER', 'RESET_PASSWORD'
+let pendingPayload = null;
+let otpTimerInterval = null;
+let otpTimeLeft = 120; // 2 minutes
+let viewHistory = ['login']; // Navigation history stack for Back button
+
+const captchas = {
+    login: '',
+    reg: '',
+    reset: ''
+};
+
+// DOM Content Loaded Handler
+document.addEventListener('DOMContentLoaded', () => {
+    setupOtpBoxNavigation();
+    checkExistingSession();
+    startPortalClock();
+    
+    // Generate initial CAPTCHA challenges
+    generateCaptcha('login');
+    generateCaptcha('reg');
+    generateCaptcha('reset');
+
+});
+
+/* ==========================================================================
+   1. LIVE PORTAL CLOCK
+   ========================================================================== */
+function startPortalClock() {
+    const clockEl = document.getElementById('portal-clock');
+    if (!clockEl) return;
+    const update = () => {
+        const now = new Date();
+        clockEl.textContent = now.toLocaleString('en-US', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        }) + ' IST';
+    };
+    update();
+    setInterval(update, 1000);
+}
+
+/* ==========================================================================
+   2. INTERACTIVE CAPTCHA GENERATOR (CANVAS BASED)
+   ========================================================================== */
+function generateCaptcha(type) {
+    const canvas = document.getElementById(`${type}-captcha-canvas`);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 5; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    captchas[type] = code;
+
+    ctx.fillStyle = '#e2e8f0';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (let i = 0; i < 6; i++) {
+        ctx.strokeStyle = `rgba(15, 23, 42, ${0.15 + Math.random() * 0.25})`;
+        ctx.beginPath();
+        ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+        ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+    }
+
+    ctx.font = 'bold 22px "Roboto Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const charWidth = canvas.width / 5;
+    for (let i = 0; i < code.length; i++) {
+        ctx.save();
+        const x = charWidth * i + charWidth / 2;
+        const y = canvas.height / 2 + (Math.random() * 4 - 2);
+        const angle = (Math.random() * 0.4) - 0.2;
+
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.fillStyle = i % 2 === 0 ? '#1d4ed8' : '#0f172a';
+        ctx.fillText(code[i], 0, 0);
+        ctx.restore();
+    }
+
+    for (let i = 0; i < 30; i++) {
+        ctx.fillStyle = `rgba(15, 23, 42, ${Math.random() * 0.3})`;
+        ctx.beginPath();
+        ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, 1, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    const inputField = document.getElementById(`${type}-captcha-input`);
+    if (inputField) inputField.value = '';
+}
+
+function validateCaptcha(type) {
+    const input = document.getElementById(`${type}-captcha-input`).value.trim().toUpperCase();
+    const expected = captchas[type].toUpperCase();
+    return input === expected;
+}
+
+/* ==========================================================================
+   3. VIEW NAVIGATION & BACK BUTTON HISTORY
+   ========================================================================== */
+function switchView(viewName) {
+    if (viewHistory[viewHistory.length - 1] !== viewName) {
+        viewHistory.push(viewName);
+    }
+    renderView(viewName);
+}
+
+function goBack() {
+    if (viewHistory.length > 1) {
+        viewHistory.pop(); // Remove current view
+        const previousView = viewHistory[viewHistory.length - 1] || 'login';
+        renderView(previousView);
+    } else {
+        renderView('login');
+    }
+}
+
+function renderView(viewName) {
+    const views = ['login-view', 'register-view', 'forgot-password-view', 'dashboard-view'];
+    views.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.add('hidden');
+            el.classList.remove('view-active');
+        }
+    });
+
+    const targetView = document.getElementById(`${viewName}-view`);
+    if (targetView) {
+        targetView.classList.remove('hidden');
+        targetView.classList.add('view-active');
+    }
+
+    if (viewName === 'forgot-password') {
+        document.getElementById('forgot-password-form-1').classList.remove('hidden');
+        document.getElementById('forgot-password-form-2').classList.add('hidden');
+    }
+
+    if (viewName === 'login') generateCaptcha('login');
+    if (viewName === 'register') generateCaptcha('reg');
+    if (viewName === 'forgot-password') generateCaptcha('reset');
+}
+
+/* ==========================================================================
+   4. PASSWORD UTILITIES
+   ========================================================================== */
+function togglePasswordVisibility(inputId, btnEl) {
+    const input = document.getElementById(inputId);
+    const eyeOpen = btnEl.querySelector('.eye-open');
+    const eyeClosed = btnEl.querySelector('.eye-closed');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        eyeOpen.classList.add('hidden');
+        eyeClosed.classList.remove('hidden');
+    } else {
+        input.type = 'password';
+        eyeOpen.classList.remove('hidden');
+        eyeClosed.classList.add('hidden');
+    }
+}
+
+function checkPasswordStrength(val) {
+    const bar = document.getElementById('strength-bar');
+    const text = document.getElementById('strength-text');
+    let score = 0;
+
+    if (!val) {
+        bar.style.width = '0%';
+        bar.style.backgroundColor = 'transparent';
+        text.textContent = 'Password Rating';
+        return;
+    }
+
+    if (val.length >= 6) score += 25;
+    if (val.length >= 10) score += 25;
+    if (/[A-Z]/.test(val)) score += 25;
+    if (/[0-9!@#$%^&*]/.test(val)) score += 25;
+
+    bar.style.width = `${score}%`;
+
+    if (score <= 25) {
+        bar.style.backgroundColor = '#dc2626';
+        text.textContent = 'Weak Password';
+        text.style.color = '#dc2626';
+    } else if (score <= 50) {
+        bar.style.backgroundColor = '#d97706';
+        text.textContent = 'Moderate Password';
+        text.style.color = '#d97706';
+    } else if (score <= 75) {
+        bar.style.backgroundColor = '#2563eb';
+        text.textContent = 'Strong Password';
+        text.style.color = '#2563eb';
+    } else {
+        bar.style.backgroundColor = '#059669';
+        text.textContent = 'Bank-Grade Strong Password';
+        text.style.color = '#059669';
+    }
+}
+
+/* ==========================================================================
+   5. AUTHENTICATION FORM HANDLERS (WITH CAPTCHA CHECK)
+   ========================================================================== */
+
+// 1. LOGIN HANDLER
+function handleLoginSubmit(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    if (!validateCaptcha('login')) {
+        showToast('Invalid Security CAPTCHA code. Please re-enter the code.', 'error');
+        generateCaptcha('login');
+        return;
+    }
+
+    const btn = document.getElementById('btn-login');
+    setButtonLoading(btn, true);
+
+    setTimeout(() => {
+        setButtonLoading(btn, false);
+        const users = getUsersFromStorage();
+        const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+        if (!user || user.password !== password) {
+            showToast('Invalid email address or password', 'error');
+            generateCaptcha('login');
+            return;
+        }
+
+        triggerOtpFlow('LOGIN', email, { user });
+    }, 500);
+}
+
+// 2. REGISTER HANDLER
+function handleRegisterSubmit(e) {
+    e.preventDefault();
+    const firstName = document.getElementById('reg-firstname').value.trim();
+    const lastName = document.getElementById('reg-lastname').value.trim();
+    const name = `${firstName} ${lastName}`.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const phone = document.getElementById('reg-phone').value.trim();
+    const password = document.getElementById('reg-password').value;
+
+    if (!validateCaptcha('reg')) {
+        showToast('Invalid Security CAPTCHA code. Please re-enter.', 'error');
+        generateCaptcha('reg');
+        return;
+    }
+
+    const users = getUsersFromStorage();
+    const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+    if (existing) {
+        showToast('An account with this email address already exists', 'error');
+        generateCaptcha('reg');
+        return;
+    }
+
+    if (password.length < 6) {
+        showToast('Password must be at least 6 characters long', 'error');
+        return;
+    }
+
+    if (phone.length !== 10 || !/^\d+$/.test(phone)) {
+        showToast('Mobile number must be exactly 10 digits', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('btn-register');
+    setButtonLoading(btn, true);
+
+    setTimeout(() => {
+        setButtonLoading(btn, false);
+        const accountNumber = `#8849-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`;
+        const newUserObj = {
+            name,
+            email,
+            phone,
+            password,
+            accountType: 'Savings Account',
+            accountNumber,
+            balance: '25,000.00'
+        };
+
+        triggerOtpFlow('REGISTER', email, { newUserObj });
+    }, 500);
+}
+
+// 3. FORGOT PASSWORD STEP 1 HANDLER
+function handleForgotPasswordRequest(e) {
+    e.preventDefault();
+    const email = document.getElementById('reset-email').value.trim();
+
+    if (!validateCaptcha('reset')) {
+        showToast('Invalid Security CAPTCHA code. Please re-enter.', 'error');
+        generateCaptcha('reset');
+        return;
+    }
+
+    const users = getUsersFromStorage();
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+    if (!user) {
+        showToast('No account found with this email address', 'error');
+        generateCaptcha('reset');
+        return;
+    }
+
+    const btn = document.getElementById('btn-forgot-1');
+    setButtonLoading(btn, true);
+
+    setTimeout(() => {
+        setButtonLoading(btn, false);
+        triggerOtpFlow('RESET_PASSWORD', email, { userEmail: email });
+    }, 500);
+}
+
+// 4. FORGOT PASSWORD STEP 2 HANDLER
+function handleNewPasswordSubmit(e) {
+    e.preventDefault();
+    const email = document.getElementById('reset-verified-email').textContent;
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-new-password').value;
+
+    if (newPassword !== confirmPassword) {
+        showToast('Passwords do not match', 'error');
+        return;
+    }
+
+    if (newPassword.length < 6) {
+        showToast('Password must be at least 6 characters', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('btn-forgot-2');
+    setButtonLoading(btn, true);
+
+    setTimeout(() => {
+        setButtonLoading(btn, false);
+        const users = getUsersFromStorage();
+        const userIndex = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
+        if (userIndex !== -1) {
+            users[userIndex].password = newPassword;
+            localStorage.setItem('bank_users', JSON.stringify(users));
+            showToast('Credentials updated successfully! Please sign in.', 'success');
+            switchView('login');
+            document.getElementById('login-email').value = email;
+            document.getElementById('login-password').value = newPassword;
+        }
+    }, 600);
+}
+
+/* ==========================================================================
+   6. REAL GMAIL OTP DISPATCH ENGINE
+   ========================================================================== */
+
+async function triggerOtpFlow(action, email, payload) {
+    pendingOtpAction = action;
+    pendingPayload = payload;
+    
+    currentOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    document.getElementById('otp-target-display').textContent = email;
+
+    const boxes = document.querySelectorAll('.otp-box');
+    boxes.forEach(box => box.value = '');
+    boxes[0].focus();
+
+    document.getElementById('otp-modal-overlay').classList.remove('hidden');
+
+    startOtpTimer();
+
+    await sendRealOtpEmail(email, currentOtpCode, action);
+}
+
+async function sendRealOtpEmail(targetEmail, otpCode, action) {
+    try {
+        const response = await fetch('/api/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: targetEmail, otp: otpCode, action: action })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && !data.requiresFrontendApiFallback) {
+                return;
+            }
+        }
+    } catch (e) {
+        console.log('Backend server unreachable, using web API dispatch...');
+    }
+
+    try {
+        const formData = new FormData();
+        formData.append('email', targetEmail);
+        formData.append('_subject', `Bank Portal OTP Verification Code: ${otpCode}`);
+        formData.append('Security OTP Code', otpCode);
+        formData.append('Action', action);
+        formData.append('Expiration', '2 Minutes');
+
+        await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(targetEmail)}`, {
+            method: 'POST',
+            body: formData,
+            headers: { 'Accept': 'application/json' }
+        });
+    } catch (err) {
+        console.error('Web Email dispatch error:', err);
+    }
+}
+
+function closeOtpModal() {
+    document.getElementById('otp-modal-overlay').classList.add('hidden');
+    if (otpTimerInterval) clearInterval(otpTimerInterval);
+}
+
+function startOtpTimer() {
+    if (otpTimerInterval) clearInterval(otpTimerInterval);
+    otpTimeLeft = 120;
+    const timerDisplay = document.getElementById('otp-countdown');
+    const resendBtn = document.getElementById('resend-otp-btn');
+    resendBtn.disabled = true;
+
+    otpTimerInterval = setInterval(() => {
+        otpTimeLeft--;
+        const mins = Math.floor(otpTimeLeft / 60).toString().padStart(2, '0');
+        const secs = (otpTimeLeft % 60).toString().padStart(2, '0');
+        timerDisplay.textContent = `${mins}:${secs}`;
+
+        if (otpTimeLeft <= 0) {
+            clearInterval(otpTimerInterval);
+            timerDisplay.textContent = '00:00';
+            resendBtn.disabled = false;
+            showToast('OTP expired. Click Resend Gmail OTP.', 'error');
+        }
+    }, 1000);
+}
+
+async function resendOtpCode() {
+    const targetEmail = document.getElementById('otp-target-display').textContent;
+    currentOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    startOtpTimer();
+    const boxes = document.querySelectorAll('.otp-box');
+    boxes.forEach(box => box.value = '');
+    boxes[0].focus();
+
+    await sendRealOtpEmail(targetEmail, currentOtpCode, pendingOtpAction);
+}
+
+function setupOtpBoxNavigation() {
+    const boxes = document.querySelectorAll('.otp-box');
+    boxes.forEach((box, idx) => {
+        box.addEventListener('input', (e) => {
+            const val = e.target.value;
+            if (val.length === 1 && idx < boxes.length - 1) {
+                boxes[idx + 1].focus();
+            }
+            
+            let fullCode = '';
+            boxes.forEach(b => fullCode += b.value);
+            if (fullCode.length === 6) {
+                submitOtpVerification();
+            }
+        });
+
+        box.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !box.value && idx > 0) {
+                boxes[idx - 1].focus();
+            }
+        });
+
+        box.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
+            if (/^\d{6}$/.test(pasteData)) {
+                for (let i = 0; i < Math.min(pasteData.length, boxes.length); i++) {
+                    boxes[i].value = pasteData[i];
+                }
+                submitOtpVerification();
+            }
+        });
+    });
+}
+
+function submitOtpVerification() {
+    const boxes = document.querySelectorAll('.otp-box');
+    let enteredCode = '';
+    boxes.forEach(b => enteredCode += b.value);
+
+    if (enteredCode.length < 6) {
+        showToast('Please enter the full 6-digit OTP code', 'error');
+        return;
+    }
+
+    if (enteredCode !== currentOtpCode) {
+        showToast('Invalid OTP Code. Please check your Gmail inbox.', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('btn-verify-otp');
+    setButtonLoading(btn, true);
+
+    setTimeout(() => {
+        setButtonLoading(btn, false);
+        closeOtpModal();
+
+        if (pendingOtpAction === 'LOGIN') {
+            completeLogin(pendingPayload.user);
+        } else if (pendingOtpAction === 'REGISTER') {
+            const users = getUsersFromStorage();
+            users.push(pendingPayload.newUserObj);
+            localStorage.setItem('bank_users', JSON.stringify(users));
+            completeLogin(pendingPayload.newUserObj);
+        } else if (pendingOtpAction === 'RESET_PASSWORD') {
+            document.getElementById('reset-verified-email').textContent = pendingPayload.userEmail;
+            document.getElementById('forgot-password-form-1').classList.add('hidden');
+            document.getElementById('forgot-password-form-2').classList.remove('hidden');
+        }
+    }, 500);
+}
+
+/* ==========================================================================
+   7. SESSION & DASHBOARD MANAGEMENT
+   ========================================================================== */
+
+function completeLogin(user) {
+    currentUser = user;
+    sessionStorage.setItem('bank_active_session', JSON.stringify(user));
+    
+    document.getElementById('dash-user-name').textContent = user.name;
+    document.getElementById('dash-acc-num').textContent = `ACC: ${user.accountNumber}`;
+    document.getElementById('dash-acc-type').textContent = user.accountType || 'Premier Vault Account';
+    document.getElementById('dash-balance').textContent = user.balance || '148,920.50';
+    
+    const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+    document.getElementById('dash-avatar').textContent = initials || 'JD';
+
+    document.getElementById('last-login-time').textContent = `Just Now • ${new Date().toLocaleTimeString()} (Gmail OTP Verified)`;
+
+    switchView('dashboard');
+}
+
+function checkExistingSession() {
+    const sessionStr = sessionStorage.getItem('bank_active_session');
+    if (sessionStr) {
+        try {
+            const user = JSON.parse(sessionStr);
+            completeLogin(user);
+        } catch(e) {
+            sessionStorage.removeItem('bank_active_session');
+        }
+    }
+}
+
+function handleLogout() {
+    sessionStorage.removeItem('bank_active_session');
+    currentUser = null;
+    switchView('login');
+}
+
+function triggerQuickAction(actionName) {
+    showTimeoutModal("This feature is currently under development.");
+}
+
+function showHelpModal(e) {
+    e.preventDefault();
+    showToast('Customer Help Desk: Call Toll Free 1-800-555-BANK or email support@bankportal.com', 'info');
+}
+
+/* ==========================================================================
+   INTERACTIVE SPX BANK PLUGINS
+   ========================================================================== */
+function playCaptchaSound(type) {
+    if ('speechSynthesis' in window) {
+        const code = captchas[type];
+        if (code) {
+            const utterance = new SpeechSynthesisUtterance(code.split('').join(' '));
+            utterance.rate = 0.75;
+            utterance.pitch = 1.0;
+            window.speechSynthesis.speak(utterance);
+            showToast('Reading CAPTCHA aloud...', 'success');
+        }
+    } else {
+        showToast('Text-to-speech is not supported in your browser.', 'error');
+    }
+}
+
+function toggleBalanceVisibility() {
+    const balanceEl = document.getElementById('dash-balance');
+    const eyeIcon = document.getElementById('balance-eye-icon');
+    if (!balanceEl || !eyeIcon) return;
+
+    const isHidden = balanceEl.getAttribute('data-hidden') === 'true';
+    if (isHidden) {
+        // Show balance
+        balanceEl.textContent = currentUser ? currentUser.balance : '148,920.50';
+        balanceEl.setAttribute('data-hidden', 'false');
+        eyeIcon.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+        showToast('Balance shown', 'info');
+    } else {
+        // Hide balance
+        balanceEl.textContent = 'XXXX.XX';
+        balanceEl.setAttribute('data-hidden', 'true');
+        eyeIcon.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+        showToast('Balance hidden', 'info');
+    }
+}
+
+function showTimeoutModal(message) {
+    const modal = document.getElementById('timeout-modal-overlay');
+    const textEl = document.getElementById('timeout-message-text');
+    if (modal) {
+        if (textEl && message) {
+            textEl.textContent = message;
+        }
+        modal.classList.remove('hidden');
+    }
+}
+
+function closeTimeoutModal() {
+    const modal = document.getElementById('timeout-modal-overlay');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+/* ==========================================================================
+   8. UI UTILITIES (TOASTS & SPINNERS)
+   ========================================================================== */
+
+function getUsersFromStorage() {
+    return JSON.parse(localStorage.getItem('bank_users')) || [];
+}
+
+function setButtonLoading(button, isLoading) {
+    const textEl = button.querySelector('.btn-text');
+    const spinnerEl = button.querySelector('.btn-spinner');
+    const arrowEl = button.querySelector('.btn-arrow');
+
+    if (isLoading) {
+        button.disabled = true;
+        if (textEl) textEl.style.opacity = '0.5';
+        if (spinnerEl) spinnerEl.classList.remove('hidden');
+        if (arrowEl) arrowEl.classList.add('hidden');
+    } else {
+        button.disabled = false;
+        if (textEl) textEl.style.opacity = '1';
+        if (spinnerEl) spinnerEl.classList.add('hidden');
+        if (arrowEl) arrowEl.classList.remove('hidden');
+    }
+}
+
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    let iconSvg = '';
+    if (type === 'success') {
+        iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#059669" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
+    } else if (type === 'error') {
+        iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`;
+    } else {
+        iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#1d4ed8" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+    }
+
+    toast.innerHTML = `${iconSvg} <span>${message}</span>`;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(50px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 4500);
+}

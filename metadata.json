@@ -1,0 +1,6 @@
+{
+  "name": "SPX BANK - Net Banking",
+  "description": "Secure Net Banking portal with accounts overview, transfer services, OTP verification, and captcha security.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

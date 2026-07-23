@@ -1,0 +1,1737 @@
+/* ==========================================================================
+   SPX BANK NET BANKING PORTAL DESIGN STYLING
+   ========================================================================== */
+
+:root {
+    /* SBI Palette */
+    --sbi-dark-purple: #3c1253;      /* Deep violet header background */
+    --sbi-accent-purple: #6d1c7f;    /* Primary logo/button purple */
+    --sbi-light-purple: #f3ecf7;     /* Background light violet accent */
+    --sbi-text-dark: #222222;
+    --sbi-text-gray: #555555;
+    --sbi-border-color: #dcd3e4;
+    --sbi-orange: #f26f21;           /* Ring orange accent */
+    --sbi-blue: #00a2e8;             /* SBI circle keyhole blue */
+
+    --font-sbi: 'Open Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: 'Roboto Mono', monospace;
+    --sbi-shadow: 0 4px 15px rgba(60, 18, 83, 0.08);
+    --sbi-card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 20px;
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-sbi);
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    background-color: #faf8fc;
+    color: var(--sbi-text-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.portal-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* ==========================================================================
+   1. SBI TOP NAV STRIP
+   ========================================================================== */
+.sbi-top-nav {
+    background-color: var(--sbi-dark-purple);
+    color: #e6dbf0;
+    font-size: 0.72rem;
+    padding: 0.35rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sbi-top-nav-container {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sbi-top-nav-left, .sbi-top-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 0.95rem;
+}
+
+.sbi-top-tab {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-weight: 700;
+    padding: 0.35rem 0.85rem;
+    margin: -0.35rem 0;
+    border-radius: 0;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.sbi-top-link {
+    color: #dfd2ec;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.sbi-top-link:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.sbi-icon-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.sbi-lang-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+}
+
+.sbi-top-divider {
+    color: rgba(255, 255, 255, 0.15);
+}
+
+.sbi-font-btn {
+    background: none;
+    border: none;
+    color: #e6dbf0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0 2px;
+}
+
+.sbi-font-btn:hover {
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   2. SBI MAIN BRANDING HEADER
+   ========================================================================== */
+.sbi-main-header {
+    background-color: #ffffff;
+    border-bottom: 2px solid #e6e1eb;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    position: sticky;
+    top: 0;
+    z-index: 99;
+}
+
+.sbi-header-container {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Logo Styling */
+.sbi-logo-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+    white-space: nowrap;
+    line-height: 1.1;
+}
+
+.spx-text {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #5c1c7f;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+}
+
+.sbi-logo-ring {
+    width: 24px;
+    height: 24px;
+    border: 3.5px solid var(--sbi-orange);
+    border-radius: 50%;
+    margin: 0 4px;
+    position: relative;
+    display: inline-block;
+}
+
+.sbi-ring-dot {
+    width: 7px;
+    height: 7px;
+    background-color: var(--sbi-blue);
+    border-radius: 50%;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.sbi-brand-text {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #004c8c;
+    letter-spacing: -0.5px;
+}
+
+.net-banking-tag {
+    font-size: 0.52rem;
+    font-weight: 700;
+    color: #666666;
+    letter-spacing: 1.5px;
+    display: block;
+    white-space: nowrap;
+    margin-top: 1px;
+}
+
+/* Nav Menu */
+.sbi-main-nav {
+    flex-grow: 1;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    display: flex;
+    align-items: center;
+}
+
+.sbi-nav-menu {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    gap: 0.5rem;
+}
+
+.sbi-nav-item {
+    color: var(--sbi-text-gray);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.4rem 0.2rem;
+    position: relative;
+    transition: var(--transition);
+}
+
+.sbi-nav-item:hover {
+    color: var(--sbi-accent-purple);
+}
+
+.sbi-nav-item.active {
+    color: var(--sbi-accent-purple);
+    font-weight: 700;
+}
+
+.sbi-nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.75rem;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: var(--sbi-accent-purple);
+}
+
+.sbi-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.sbi-header-icon-btn {
+    background: none;
+    border: none;
+    color: var(--sbi-text-gray);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    transition: var(--transition);
+}
+
+.sbi-header-icon-btn:hover {
+    color: var(--sbi-accent-purple);
+}
+
+.sbi-user-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    background-color: #f7f4fa;
+    border: 1px solid #e0d8e8;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.sbi-avatar-initials {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    background-color: var(--sbi-accent-purple);
+    color: #ffffff;
+    border-radius: 50%;
+    font-size: 0.72rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sbi-user-profile-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--sbi-accent-purple);
+}
+
+.sbi-logout-btn {
+    background-color: var(--sbi-dark-purple);
+    color: #ffffff;
+    border: none;
+    padding: 0.45rem 1rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.sbi-logout-btn:hover {
+    background-color: var(--sbi-accent-purple);
+    box-shadow: 0 4px 10px rgba(109, 28, 127, 0.2);
+}
+
+/* ==========================================================================
+   3. AUTH LAYOUT & SPLIT VIEW
+   ========================================================================== */
+.sbi-portal-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.sbi-auth-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: #f2ecf6; /* Soft light violet background matching branding */
+    min-height: calc(100vh - 84px);
+    position: relative;
+}
+
+.sbi-auth-split {
+    max-width: 1140px;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 3rem;
+    padding: 3rem 1.5rem 1.5rem 1.5rem;
+    z-index: 5;
+}
+
+/* Left welcome text block */
+.sbi-welcome-panel {
+    flex-basis: 52%;
+    color: var(--sbi-dark-purple);
+}
+
+.sbi-hello-title {
+    font-size: 5rem;
+    font-weight: 700;
+    color: #9f218c;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.sbi-welcome-subtitle {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--sbi-dark-purple);
+    margin-bottom: 2rem;
+}
+
+.sbi-new-user-section {
+    border-top: 1px dashed rgba(109, 28, 127, 0.25);
+    border-bottom: 1px dashed rgba(109, 28, 127, 0.25);
+    padding: 1.5rem 0;
+    margin-bottom: 1.5rem;
+}
+
+body:has(#register-view:not(.hidden)) .sbi-new-user-section {
+    display: none;
+}
+
+/* Registration Benefits Section Styles */
+.sbi-register-benefits-section {
+    display: none; /* Hidden by default (on login page) */
+    border-top: 1px dashed rgba(109, 28, 127, 0.25);
+    padding: 1.5rem 0;
+    margin-bottom: 1.5rem;
+}
+
+/* Show only on register view */
+body:has(#register-view:not(.hidden)) .sbi-register-benefits-section {
+    display: block;
+}
+
+.sbi-benefits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+}
+
+.sbi-benefits-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--sbi-dark-purple);
+    margin-bottom: 0.75rem;
+}
+
+.sbi-benefits-list li svg {
+    color: #22c55e; /* Green checkmarks */
+}
+
+.sbi-login-prompt p {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--sbi-accent-purple);
+    margin-bottom: 0.5rem;
+}
+
+.sbi-btn-purple-outline {
+    background: transparent;
+    border: 2px solid var(--sbi-accent-purple);
+    color: var(--sbi-accent-purple);
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.sbi-btn-purple-outline:hover {
+    background: var(--sbi-accent-purple);
+    color: white;
+}
+
+.sbi-new-user-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--sbi-accent-purple);
+    margin-bottom: 0.2rem;
+}
+
+.sbi-new-user-desc {
+    font-size: 0.85rem;
+    color: var(--sbi-text-gray);
+    margin-bottom: 1rem;
+}
+
+.sbi-new-user-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.sbi-btn-purple-fill {
+    background-color: var(--sbi-accent-purple);
+    color: #ffffff;
+    border: none;
+    padding: 0.65rem 1.75rem;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.sbi-btn-purple-fill:hover {
+    background-color: var(--sbi-dark-purple);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(60, 18, 83, 0.2);
+}
+
+.sbi-btn-purple-outline {
+    background-color: transparent;
+    color: var(--sbi-accent-purple);
+    border: 1px solid var(--sbi-accent-purple);
+    padding: 0.65rem 1.75rem;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.sbi-btn-purple-outline:hover {
+    background-color: var(--sbi-accent-purple);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.sbi-open-now-text {
+    font-size: 0.85rem;
+    color: var(--sbi-text-gray);
+}
+
+.sbi-open-link {
+    color: var(--sbi-accent-purple);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.sbi-open-link:hover {
+    text-decoration: underline;
+}
+
+/* Right side Card Container */
+.sbi-card-panel {
+    flex-basis: 40%;
+    min-width: 380px;
+}
+
+.sbi-portal-card {
+    background-color: #ffffff;
+    border: 1px solid #e1daea;
+    border-radius: 8px;
+    padding: 2.2rem;
+    box-shadow: var(--sbi-card-shadow);
+}
+
+.sbi-card-title {
+    margin-bottom: 1.5rem;
+    border-bottom: 1.5rem;
+    text-align: center;
+}
+
+.sbi-card-title h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--sbi-accent-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Form inputs styling */
+.sbi-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.sbi-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.sbi-form-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--sbi-text-gray);
+}
+
+.sbi-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.sbi-form-input {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    background-color: #f7f6f9;
+    border: 1px solid #ccd;
+    border-radius: 4px;
+    font-size: 0.88rem;
+    color: var(--sbi-text-dark);
+    outline: none;
+    transition: var(--transition);
+}
+
+.sbi-form-input:focus {
+    border-color: var(--sbi-accent-purple);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(109, 28, 127, 0.1);
+}
+
+.sbi-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23555555' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.85rem center;
+    cursor: pointer;
+}
+
+/* Password button overlay options */
+.sbi-input-addon-buttons {
+    position: absolute;
+    right: 0.5rem;
+    display: flex;
+    gap: 0.3rem;
+}
+
+.sbi-input-btn {
+    background: none;
+    border: none;
+    color: var(--sbi-text-gray);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    transition: var(--transition);
+}
+
+.sbi-input-btn:hover {
+    color: var(--sbi-accent-purple);
+}
+
+.absolute-btn {
+    position: absolute;
+    right: 0.5rem;
+}
+
+.sbi-form-assist-row {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 0.15rem;
+}
+
+.sbi-assist-btn {
+    background: none;
+    border: none;
+    color: var(--sbi-accent-purple);
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.sbi-assist-btn:hover {
+    color: var(--sbi-dark-purple);
+}
+
+/* Captcha area styling */
+.sbi-captcha-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.sbi-captcha-input {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    background-color: #f7f6f9;
+    border: 1px solid #ccd;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    outline: none;
+}
+
+.sbi-captcha-input:focus {
+    border-color: var(--sbi-accent-purple);
+    background-color: #ffffff;
+}
+
+.sbi-captcha-image-block {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccd;
+    border-radius: 4px;
+    background-color: #eeeeee;
+    padding: 1px;
+    height: 38px;
+}
+
+.sbi-captcha-image-block canvas {
+    max-width: 100%;
+    height: 100%;
+}
+
+.sbi-captcha-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+    border-left: 1px solid #ccc;
+    padding: 0 4px;
+}
+
+.sbi-captcha-action-btn {
+    background: none;
+    border: none;
+    color: var(--sbi-text-gray);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+}
+
+.sbi-captcha-action-btn:hover {
+    color: var(--sbi-accent-purple);
+}
+
+/* Submit and Action Buttons */
+.sbi-submit-container {
+    margin-top: 0.5rem;
+}
+
+.sbi-btn-login {
+    width: 100%;
+    background-color: #e6e6e6; /* Start as light grey, active colors override */
+    color: #999999;
+    border: none;
+    padding: 0.65rem;
+    border-radius: 20px; /* Fully rounded buttons */
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    transition: var(--transition);
+}
+
+/* Standard login is active once values are filled, but let's color it natively */
+#login-form .sbi-btn-login, 
+#register-form .sbi-btn-login, 
+#forgot-password-form-1 .sbi-btn-login,
+#forgot-password-form-2 .sbi-btn-login {
+    background-color: var(--sbi-accent-purple);
+    color: #ffffff;
+}
+
+.sbi-btn-login:hover {
+    background-color: var(--sbi-dark-purple);
+    box-shadow: 0 4px 12px rgba(60, 18, 83, 0.2);
+}
+
+.sbi-lock-unlock-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.25rem;
+}
+
+.sbi-lock-btn {
+    background: none;
+    border: none;
+    color: var(--sbi-text-gray);
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.sbi-lock-btn:hover {
+    color: var(--sbi-accent-purple);
+}
+
+/* Back Row for registration cards */
+.sbi-back-nav-row {
+    margin-bottom: 0.6rem;
+    display: flex;
+}
+
+.sbi-back-button {
+    background: #ffffff;
+    border: 1px solid var(--sbi-accent-purple);
+    color: var(--sbi-accent-purple);
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: var(--transition);
+}
+
+.sbi-back-button:hover {
+    background-color: var(--sbi-accent-purple);
+    color: #ffffff;
+}
+
+/* Strength Meter */
+.strength-meter {
+    height: 4px;
+    background-color: #e5e7eb;
+    border-radius: 2px;
+    margin-top: 0.35rem;
+    overflow: hidden;
+}
+
+.strength-bar {
+    height: 100%;
+    width: 0;
+    transition: var(--transition);
+}
+
+.strength-text {
+    font-size: 0.72rem;
+    color: var(--sbi-text-gray);
+    margin-top: 0.15rem;
+    display: block;
+}
+
+.step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.85rem;
+    background-color: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 4px;
+    color: #065f46;
+    font-size: 0.78rem;
+    margin-bottom: 1rem;
+}
+
+/* ==========================================================================
+   4. BOTTOM WAVES AND ACTIONS
+   ========================================================================== */
+.sbi-auth-bottom-banner {
+    position: relative;
+    width: 100%;
+    background-color: transparent;
+    margin-top: auto;
+}
+
+.sbi-quick-actions-bar {
+    position: absolute;
+    bottom: 4.5rem;
+    left: 8%;
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(2px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.35rem 0.95rem;
+    border-radius: 20px;
+    z-index: 10;
+}
+
+.sbi-qa-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.sbi-qa-bullets-container {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.sbi-bullet-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.sbi-bullet-dot.active {
+    background-color: #ffffff;
+    width: 16px;
+    border-radius: 3px;
+}
+
+.sbi-wave-wrapper {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: -5px;
+}
+
+.sbi-background-waves {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute;
+    bottom: 0;
+}
+
+/* ==========================================================================
+   5. OTP SIDE DRAWER STYLING
+   ========================================================================== */
+.otp-drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 1000;
+    display: flex;
+    justify-content: flex-end; /* Align right */
+    align-items: stretch;
+    transition: var(--transition);
+}
+
+.otp-drawer {
+    background-color: #2b2c82; /* Solid dark blue drawer overlay */
+    color: #ffffff;
+    width: 100%;
+    max-width: 380px; /* Panel Width */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 3rem 2rem;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.35);
+    animation: slideInRight 0.3s ease-out;
+    overflow-y: auto;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.otp-drawer-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 2rem;
+}
+
+.otp-close-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: var(--transition);
+}
+
+.otp-close-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.otp-drawer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.otp-delivery-notice {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    opacity: 0.95;
+}
+
+.sbi-otp-target {
+    color: #00f2fe;
+    font-size: 0.9rem;
+    display: block;
+    margin-top: 0.3rem;
+}
+
+.sbi-otp-fields-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.otp-inputs-wrapper {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.sbi-otp-box {
+    width: 38px;
+    height: 42px;
+    background-color: transparent;
+    border: none;
+    border-bottom: 2.5px solid #ffffff; /* Underscore line styling for inputs */
+    color: #ffffff;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    outline: none;
+    font-family: var(--font-mono);
+}
+
+.sbi-otp-box:focus {
+    border-bottom-color: #00f2fe;
+}
+
+.sbi-otp-reveal-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    padding: 4px;
+}
+
+.sbi-otp-reveal-btn:hover {
+    color: #ffffff;
+}
+
+.sbi-otp-timer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    margin-bottom: 1rem;
+}
+
+.sbi-otp-timer-text {
+    opacity: 0.8;
+}
+
+.sbi-otp-resend-btn {
+    background: none;
+    border: none;
+    color: #00f2fe;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.sbi-otp-resend-btn:disabled {
+    color: rgba(255, 255, 255, 0.4);
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
+.sbi-otp-submit-row {
+    margin-top: 1rem;
+}
+
+.sbi-btn-otp-proceed {
+    width: 100%;
+    background-color: #ffffff;
+    color: #2b2c82;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 25px; /* fully rounded */
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.sbi-btn-otp-proceed:hover {
+    background-color: #f0f0f5;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+}
+
+/* ==========================================================================
+   6. HIGH FIDELITY DASHBOARD VIEW
+   ========================================================================== */
+.sbi-dashboard-container {
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Greeting Bar */
+.sbi-dash-greeting-bar {
+    background-color: #ffffff;
+    border: 1px solid #e7e3ec;
+    border-radius: 4px;
+    padding: 0.85rem 1.25rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+
+.sbi-dash-greeting-text {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--sbi-accent-purple);
+}
+
+.sbi-dash-greeting-text strong {
+    font-weight: 700;
+}
+
+/* Carousel Section */
+.sbi-carousel-section {
+    width: 100%;
+    overflow-x: auto;
+    background-color: #ffffff;
+    border: 1px solid #e7e3ec;
+    border-radius: 8px;
+    padding: 1.25rem;
+    scrollbar-width: thin;
+}
+
+.sbi-carousel-wrapper {
+    display: flex;
+    gap: 2.2rem;
+    min-width: max-content;
+    padding: 0.25rem 0;
+}
+
+.sbi-carousel-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    width: 90px;
+    text-align: center;
+}
+
+.sbi-carousel-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    transition: var(--transition);
+}
+
+.sbi-carousel-item:hover .sbi-carousel-icon {
+    transform: scale(1.08) translateY(-2px);
+}
+
+.sbi-carousel-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--sbi-text-gray);
+    line-height: 1.2;
+}
+
+/* Circle Gradient Background Colors */
+.bg-cyan { background: linear-gradient(135deg, #00b4db, #0083b0); }
+.bg-rose { background: linear-gradient(135deg, #f857a6, #ff5858); }
+.bg-blue { background: linear-gradient(135deg, #4776e6, #8e54e9); }
+.bg-emerald { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.bg-orange { background: linear-gradient(135deg, #f12711, #f5af19); }
+.bg-purple { background: linear-gradient(135deg, #5c258d, #4389a2); }
+.bg-pink { background: linear-gradient(135deg, #ec008c, #fc6767); }
+.bg-indigo { background: linear-gradient(135deg, #1e3c72, #2a5298); }
+
+/* Grid Dashboard Content */
+.sbi-dash-grid {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.sbi-section-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.85rem;
+}
+
+.sbi-section-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--sbi-dark-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.sbi-view-accounts-btn {
+    background-color: var(--sbi-light-purple);
+    color: var(--sbi-accent-purple);
+    border: 1px solid #d8cae6;
+    padding: 0.35rem 0.95rem;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.sbi-view-accounts-btn:hover {
+    background-color: var(--sbi-accent-purple);
+    color: #ffffff;
+}
+
+/* Card lists */
+.sbi-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.sbi-overview-card {
+    border-radius: 6px;
+    padding: 1.25rem;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 180px;
+    box-shadow: var(--sbi-card-shadow);
+}
+
+.bg-purple-gradient {
+    background: linear-gradient(135deg, #6c117f, #451b68);
+}
+
+.bg-light-purple {
+    background-color: #ffffff;
+    color: var(--sbi-text-dark);
+    border: 1px solid #e3daeb;
+}
+
+.bg-light-purple .sbi-ov-card-header span {
+    color: var(--sbi-accent-purple);
+    font-weight: 700;
+}
+
+.bg-blue-gradient {
+    background: linear-gradient(135deg, #18276b, #194680);
+}
+
+.sbi-ov-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    opacity: 0.95;
+    margin-bottom: 0.75rem;
+}
+
+.sbi-eye-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.sbi-ov-label {
+    font-size: 0.7rem;
+    opacity: 0.8;
+    display: block;
+    margin-bottom: 0.2rem;
+    text-transform: uppercase;
+}
+
+.sbi-ov-balance {
+    font-size: 1.45rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+}
+
+.sbi-ov-subtext {
+    font-size: 0.75rem;
+    opacity: 0.9;
+    font-family: var(--font-mono);
+}
+
+.sbi-ov-subtext-small {
+    font-size: 0.7rem;
+    opacity: 0.8;
+    margin-top: 0.1rem;
+}
+
+.sbi-ov-promo-text {
+    font-size: 0.75rem;
+    color: var(--sbi-text-gray);
+    line-height: 1.45;
+}
+
+.sbi-ov-card-footer {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+.sbi-card-action-btn {
+    flex-grow: 1;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border: none;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.sbi-card-action-btn:hover {
+    background-color: rgba(255, 255, 255, 0.35);
+}
+
+.sbi-card-action-btn.fill {
+    background-color: #ffffff;
+    color: var(--sbi-accent-purple);
+}
+
+.sbi-card-action-btn.fill:hover {
+    background-color: #f4f2f7;
+}
+
+.sbi-card-action-btn.outline-purple {
+    background-color: transparent;
+    border: 1px solid var(--sbi-accent-purple);
+    color: var(--sbi-accent-purple);
+}
+
+.sbi-card-action-btn.outline-purple:hover {
+    background-color: var(--sbi-accent-purple);
+    color: #ffffff;
+}
+
+/* Audit log section */
+.sbi-audit-section {
+    background-color: #ffffff;
+    border: 1px solid #e7e3ec;
+    border-radius: 8px;
+    padding: 1.25rem;
+}
+
+.sbi-section-title-small {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--sbi-text-gray);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+}
+
+.sbi-audit-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #faf8fc;
+    border: 1px solid #e7e3ec;
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+}
+
+.sbi-audit-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sbi-audit-icon {
+    display: flex;
+    align-items: center;
+}
+
+.sbi-audit-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.sbi-audit-details strong {
+    font-size: 0.8rem;
+    color: var(--sbi-text-dark);
+}
+
+.sbi-audit-time {
+    font-size: 0.68rem;
+    color: var(--sbi-text-gray);
+    margin-top: 0.1rem;
+}
+
+.sbi-audit-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.sbi-audit-badge.green {
+    background-color: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+}
+
+/* Sidebar lists right column */
+.sbi-dash-column-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.sbi-sidebar-widget {
+    background-color: #ffffff;
+    border: 1px solid #e6e0eb;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.01);
+}
+
+.sbi-widget-header {
+    background-color: #f7f4fa;
+    border-bottom: 1px solid #e6e0eb;
+    padding: 0.75rem 1.25rem;
+    color: var(--sbi-dark-purple);
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sbi-widget-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.sbi-widget-links li {
+    border-bottom: 1px solid #f6f3f8;
+}
+
+.sbi-widget-links li:last-child {
+    border-bottom: none;
+}
+
+.sbi-widget-links a {
+    display: block;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.78rem;
+    color: var(--sbi-text-gray);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.sbi-widget-links a:hover {
+    background-color: #fdfcff;
+    color: var(--sbi-accent-purple);
+    padding-left: 1.45rem;
+}
+
+.sbi-widget-links li.view-all {
+    background-color: #faf9fb;
+}
+
+.sbi-widget-links li.view-all a {
+    color: var(--sbi-accent-purple);
+    font-weight: 700;
+    text-align: right;
+}
+
+/* ==========================================================================
+   7. TIMEOUT / ERROR MODAL STYLING
+   ========================================================================== */
+.timeout-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.45);
+    z-index: 1500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.timeout-modal {
+    background-color: #ffffff;
+    border-top: 4px solid var(--sbi-accent-purple); /* Purple colored accent border on top */
+    border-radius: 8px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+    animation: zoomIn 0.25s ease-out;
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.timeout-modal-title {
+    padding: 1rem 1.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--sbi-dark-purple);
+    border-bottom: 1px solid #eaeaea;
+}
+
+.timeout-modal-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+}
+
+.timeout-caution-icon {
+    display: flex;
+    justify-content: center;
+}
+
+.timeout-message {
+    font-size: 0.85rem;
+    color: var(--sbi-text-gray);
+    line-height: 1.5;
+}
+
+.timeout-modal-footer {
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid #eaeaea;
+}
+
+.timeout-ok-btn {
+    background-color: var(--sbi-accent-purple);
+    color: #ffffff;
+    border: none;
+    padding: 0.45rem 2.2rem;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.timeout-ok-btn:hover {
+    background-color: var(--sbi-dark-purple);
+    box-shadow: 0 4px 10px rgba(60, 18, 83, 0.15);
+}
+
+/* ==========================================================================
+   8. FOOTER STYLING
+   ========================================================================== */
+.sbi-portal-footer {
+    background-color: #eeeeee;
+    border-top: 1px solid #dddddd;
+    padding: 1rem 1.5rem;
+    margin-top: auto;
+    font-size: 0.78rem;
+    text-align: center;
+}
+
+.sbi-footer-container {
+    max-width: 1240px;
+    margin: 0 auto;
+}
+
+.sbi-footer-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sbi-footer-links a {
+    color: #666666;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.sbi-footer-links a:hover {
+    color: var(--sbi-accent-purple);
+    text-decoration: underline;
+}
+
+.sbi-footer-divider {
+    color: #cccccc;
+}
+
+/* Toast Notifications Container */
+.toast-container {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.toast {
+    background-color: #ffffff;
+    border: 1px solid #e6e0eb;
+    border-left: 4.5px solid var(--sbi-accent-purple);
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    color: var(--sbi-text-dark);
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.toast.success { border-left-color: #059669; }
+.toast.error { border-left-color: #dc2626; }
+
+.hidden {
+    display: none !important;
+}
+
+/* ==========================================================================
+   9. DYNAMIC DUAL-VIEW CSS ENGINE (:has selector)
+   ========================================================================== */
+/* Controls display items dynamically depending on whether dashboard-view is visible */
+body:has(#dashboard-view:not(.hidden)) .sbi-auth-container {
+    display: none !important;
+}
+body:has(#dashboard-view:not(.hidden)) .logged-out-menu {
+    display: none !important;
+}
+body:has(#dashboard-view:not(.hidden)) .logged-in-menu {
+    display: flex !important;
+}
+body:has(#dashboard-view:not(.hidden)) .sbi-header-actions {
+    display: flex !important;
+}
+
+body:has(#login-view:not(.hidden)) #dashboard-view,
+body:has(#register-view:not(.hidden)) #dashboard-view,
+body:has(#forgot-password-view:not(.hidden)) #dashboard-view {
+    display: none !important;
+}
+
+/* ==========================================================================
+   10. RESPONSIVE MEDIA QUERIES
+   ========================================================================== */
+@media (max-width: 900px) {
+    .sbi-auth-split {
+        flex-direction: column;
+        gap: 2rem;
+        padding-top: 1.5rem;
+        text-align: center;
+    }
+    
+    .sbi-welcome-panel {
+        flex-basis: 100%;
+    }
+    
+    .sbi-new-user-actions {
+        justify-content: center;
+    }
+    
+    .sbi-card-panel {
+        flex-basis: 100%;
+        width: 100%;
+    }
+    
+    .sbi-dash-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .sbi-main-nav {
+        display: none; /* Hide top menus on mobile */
+    }
+    
+    .sbi-hello-title {
+        font-size: 3.5rem;
+    }
+}
+
+/* ==========================================================================
+   GLOBAL BACK BUTTON STYLING
+   ========================================================================== */
+.sbi-global-back-container {
+    max-width: 1140px;
+    width: 100%;
+    margin: 1.5rem auto 0 auto;
+    padding: 0 1.5rem;
+    display: none; /* Hidden by default */
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 10;
+}
+
+.sbi-global-back-btn {
+    background: #ffffff;
+    border: 1px solid var(--sbi-accent-purple);
+    color: var(--sbi-accent-purple);
+    padding: 0.45rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    transition: var(--transition);
+}
+
+.sbi-global-back-btn:hover {
+    background: var(--sbi-accent-purple);
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(109, 28, 127, 0.2);
+}
+
+/* Show back button only when register or forgot password view is active */
+body:has(#register-view:not(.hidden)) .sbi-global-back-container,
+body:has(#forgot-password-view:not(.hidden)) .sbi-global-back-container {
+    display: block;
+}
+
+/* Horizontal alignment for registration name fields */
+.sbi-form-row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+.sbi-form-row .sbi-form-group {
+    flex: 1;
+}
+
+/* Ensure stacks properly on mobile screens */
+@media (max-width: 480px) {
+    .sbi-form-row {
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+}
